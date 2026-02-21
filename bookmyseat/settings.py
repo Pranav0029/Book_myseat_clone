@@ -17,6 +17,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['.vercel.app']
 
+# ALLOWED_HOSTS = ['127.0.0.1', 'localhost'] {if anyone want to try this code !}
+# Isse aapka local server aur Vercel dono chalenge
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -27,6 +29,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'users',
     'movies',
+    'dashboard', # !
 ]
 
 MIDDLEWARE = [
@@ -44,7 +47,6 @@ EMAIL_BACKEND='django.core.mail.backends.console.EmailBackend'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
 
 ROOT_URLCONF = 'bookmyseat.urls'
 LOGIN_URL='/login/'
@@ -81,7 +83,7 @@ DATABASES = {
 
 #postgresql://book_myseat_clone_user:AOTC3XEcTK13Bjk20aFR5BYOZH1faX4S@dpg-d65gof1r0fns73d3u9pg-a.virginia-postgres.render.com/book_myseat_clone
 
-DATABASES['default'] = dj_database_url.parse('postgresql://book_myseat_clone_user:AOTC3XEcTK13Bjk20aFR5BYOZH1faX4S@dpg-d65gof1r0fns73d3u9pg-a.virginia-postgres.render.com/book_myseat_clone')
+DATABASES['default'] =dj_database_url.parse('postgresql://book_myseat_clone_user:AOTC3XEcTK13Bjk20aFR5BYOZH1faX4S@dpg-d65gof1r0fns73d3u9pg-a.virginia-postgres.render.com/book_myseat_clone')
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators

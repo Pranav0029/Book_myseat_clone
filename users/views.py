@@ -25,8 +25,6 @@ def home(request):
         'genre_filter': genre
     })
 
-
-
 from django.core.mail import send_mail
 from django.conf import settings
 
@@ -34,6 +32,7 @@ from django.conf import settings
 def register(request):
     if request.method == 'POST':
         form = UserRegisterForm(request.POST)
+
         if form.is_valid():
             user = form.save()
 
@@ -41,19 +40,22 @@ def register(request):
             password = form.cleaned_data.get('password1')
             email = form.cleaned_data.get('email')
 
-            user = authenticate(username=username, password=password)
-            login(request, user)
+            # request parameter added(here is not error but maye be authenticate can repeat ! )
+            user = authenticate(request, username=username, password=password)
 
-            # ✅ Email sending
+            if user is not None:
+                login(request, user)
+
+            # Email sending
             send_mail(
-                subject='Welcome to BookMySeat 🎉',
+                subject='Welcome to BookMySeat ',
                 message=(
                     f"Hello {username},\n\n"
                     "Welcome to BookMySeat!\n\n"
                     "Your account has been successfully created.\n"
                     "Now you can book your seats easily and securely.\n\n"
                     "If you have any questions, feel free to contact us.\n\n"
-                    "Happy Booking! 🚀\n"
+                    "Happy Booking! \n"
                     "Team BookMySeat"
                 ),
                 from_email=settings.EMAIL_HOST_USER,
@@ -79,21 +81,54 @@ def login_view(request):
         form=AuthenticationForm()
     return render(request,'users/login.html',{'form':form})
 
-@login_required
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+@receiver(post_save, sender=Booking)
+def send_booking_confirmation_email(sender, instance, created, **kwargs):
+    # Agar booking update hui hai (created=False) aur paid checkbox tick ho gaya hai
+    if not created and instance.paid:
+        subject = f"Ticket Confirmed: {instance.movie.name}"
+        message = (
+            f"Hello {instance.user.username},\n\n"
+            f"Your ticket for '{instance.movie.name}' has been successfully booked.\n"
+            f"Theater: {instance.theater.name}\n"
+            f"Seat Number: {instance.seat.seat_number}\n"
+            f"Status: Confirmed\n\n"
+            f"Enjoy your movie!"
+        )
+
+        from_email = settings.EMAIL_HOST_USER
+        recipient_list = [instance.user.email]
+
+        try:
+            send_mail(subject, message, from_email, recipient_list)
+        except Exception as e:
+            print(f"Email error: {e}")
+
+from django.contrib import messages
+
 def profile(request):
-    bookings= Booking.objects.filter(user=request.user)
+    # User ki sari bookings fetch karein
+    bookings = Booking.objects.filter(user=request.user).order_by('-booked_at')
+
     if request.method == 'POST':
         u_form = UserUpdateForm(request.POST, instance=request.user)
         if u_form.is_valid():
             u_form.save()
+            messages.success(request, f'Your profile has been updated!')
             return redirect('profile')
     else:
         u_form = UserUpdateForm(instance=request.user)
 
-    return render(request, 'users/profile.html', {'u_form': u_form,'bookings':bookings})
+    context = {
+        'u_form': u_form,
+        'bookings': bookings,
+    }
+    return render(request, 'users/profile.html', context)
 
 @login_required
-def reset_password(request):
+def reset_password(request):            #don't know logic !
     if request.method == 'POST':
         form=PasswordChangeForm(user=request.user,data=request.POST)
         if form.is_valid():
