@@ -142,5 +142,10 @@ EMAIL_HOST_PASSWORD ='gatjdcrfxkgwmlra'
 
 
 #payment content
+'''
 RAZORPAY_KEY_ID ="rzp_live_SJdlsLiOuM9RiK"
-RAZORPAY_KEY_SECRET ="vfE8DDrkpK11Hpq204rKWHqF"
+RAZORPAY_KEY_SECRET ="vfE8DDrkpK11Hpq204rKWHqF" 
+'''
+
+RAZORPAY_KEY_ID = os.environ.get("rzp_live_SJdlsLiOuM9RiK")
+RAZORPAY_KEY_SECRET = os.environ.get("vfE8DDrkpK11Hpq204rKWHqF")
