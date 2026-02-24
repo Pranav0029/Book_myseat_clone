@@ -15,9 +15,9 @@ SECRET_KEY = 'django-insecure-c8aetlj(=vp90n@#yoc^&d(_6ivp(d!bv-4-f!r$lawptjzrwu
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost','.vercel.app']
+ALLOWED_HOSTS = ['.vercel.app']
 
-# ALLOWED_HOSTS = ['127.0.0.1', 'localhost'] {if anyone want to try this code !}
+# ALLOWED_HOSTS = ['127.0.0.1', 'localhost'] {if anyone want to try this code !}{else (hosted): '.vercel.app'}
 # Isse aapka local server aur Vercel dono chalenge
 
 INSTALLED_APPS = [
@@ -29,7 +29,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'users',
     'movies',
-    'dashboard', # !
+    'dashboard', #
 ]
 
 MIDDLEWARE = [
@@ -132,10 +132,15 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
+#mail conetnt
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'add.mail.user0@gmail.com'
 EMAIL_HOST_PASSWORD ='gatjdcrfxkgwmlra'
+
+
+#payment content
+RAZORPAY_KEY_ID ="rzp_live_SJdlsLiOuM9RiK"
+RAZORPAY_KEY_SECRET ="vfE8DDrkpK11Hpq204rKWHqF"

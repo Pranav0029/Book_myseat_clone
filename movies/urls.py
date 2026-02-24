@@ -10,9 +10,7 @@ urlpatterns = [
     path('movie/<int:movie_id>/trailer/', views.movie_trailer, name='movie_trailer'),
 
     # payment url with parameters
-    path(
-        'payment/<int:movie_id>/<int:theater_id>/<int:seat_id>/',
-        views.payment_page,
-        name='payment_page'
-    ),
+
+    path('payment_page/<int:movie_id>/<int:theater_id>/<int:seat_id>/', views.payment_page, name='payment_page'),
+    path('verify-payment/', views.verify_payment, name='verify_payment'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,0 +1,157 @@
+{% extends "users/basic.html" %}
+{% block content %}
+
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-lg-5 mx-auto">
+
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <a href="javascript:history.back()" class="btn btn-sm btn-outline-secondary border-0">
+          <i class="bi bi-arrow-left"></i> Change Seats
+        </a>
+        <div class="badge bg-light text-dark border p-2 shadow-sm">
+          <i class="bi bi-clock-history text-danger me-1"></i>
+          Time left: <span id="countdown" class="fw-bold text-danger">05:00</span>
+        </div>
+      </div>
+
+      <div class="card shadow-lg border-0 overflow-hidden">
+        <div class="bg-dark p-4 text-center text-white">
+          <h4 class="mb-0 fw-bold">Confirm & Pay</h4>
+          <p class="small text-muted mb-0">Secure Transaction for {{ movie.name }}</p>
+        </div>
+
+        <div class="card-body p-4">
+          {% if error %}
+            <div class="alert alert-danger d-flex align-items-center" role="alert">
+              <div><i class="bi bi-exclamation-circle-fill me-2"></i>{{ error }}</div>
+            </div>
+          {% else %}
+
+            <div class="booking-summary mb-4">
+              <h6 class="text-uppercase fw-bold text-muted small mb-3" style="letter-spacing: 1px;">Booking Details</h6>
+
+              <div class="d-flex justify-content-between mb-2">
+                <span class="text-secondary">Movie Title</span>
+                <span class="fw-bold text-end">{{ movie.name }}</span>
+              </div>
+
+              <div class="d-flex justify-content-between mb-2">
+                <span class="text-secondary">Theater</span>
+                <span class="fw-bold text-end">{{ theater.name }}</span>
+              </div>
+
+              <div class="d-flex justify-content-between mb-2">
+                <span class="text-secondary">Selected Seat</span>
+                <span class="badge bg-primary px-3 fs-6">{{ seat.seat_number }}</span>
+              </div>
+
+              <hr class="my-3" style="border-style: dashed; border-top: 2px solid #eee;">
+
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="h5 mb-0">Payable Amount</span>
+                <span class="h4 mb-0 fw-bold text-success">₹{{ amount_in_rupees }}</span>
+              </div>
+            </div>
+
+            <div class="d-grid gap-2">
+              <button id="pay-btn" class="btn btn-primary btn-lg py-3 shadow-sm fw-bold">
+                PROCEED TO PAY
+              </button>
+            </div>
+
+            <div class="text-center mt-4 pt-2 border-top">
+              <img src="https://images.indianexpress.com/2022/12/Razorpaylead.jpg"
+                   alt="Razorpay"
+                   style="width:180px; height:auto;"
+                   class="mb-2 opacity-50">
+
+              <p class="text-muted" style="font-size: 0.7rem; letter-spacing: 0.5px;">
+                <i class="bi bi-shield-check-fill"></i> 100% SECURE PAYMENT ENCRYPTION
+              </p>
+            </div>
+
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+// --- 5 MINUTE TIMER LOGIC ---
+let timeInSeconds = 300;
+const countdownElement = document.getElementById('countdown');
+
+const timer = setInterval(() => {
+    const minutes = Math.floor(timeInSeconds / 60);
+    const seconds = timeInSeconds % 60;
+
+    countdownElement.innerText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+    if (timeInSeconds <= 0) {
+        clearInterval(timer)
+        alert("Payment session expired! Please try again.");
+        window.location.href = "{% url 'book_seats' theater.id %}";
+    }
+    timeInSeconds--;
+}, 1000);
+
+// --- PAYMENT LOGIC ---
+document.getElementById("pay-btn").onclick = function(e){
+    var options = {
+        "key": "{{ razorpay_key }}",
+        "amount": "{{ amount }}",
+        "currency": "INR",
+        "name": "BookMySeat",
+        "order_id": "{{ order_id }}",
+        "handler": function (response){
+            document.getElementById("pay-btn").disabled = true;
+            document.getElementById("pay-btn").innerHTML = "Verifying...";
+
+            fetch("{% url 'verify_payment' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+                body: JSON.stringify({
+                    ...response,
+                    seat_id: "{{ seat.id }}",
+                    movie_id: "{{ movie.id }}",
+                    theater_id: "{{ theater.id }}"
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.status === "Payment Successful"){
+                    window.location.href = "/profile/";
+                } else {
+                    alert("Payment Failed");
+                }
+            });
+        },
+        "theme": { "color": "#0d6efd" }
+    };
+
+    if(timeInSeconds > 0) {
+        var rzp = new Razorpay(options);
+        rzp.open();
+    } else {
+        alert("Your session has already expired.");
+    }
+    e.preventDefault();
+}
+</script>
+
+<style>
+  body { background-color: #f4f7f6; }
+  .card { border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08) !important; }
+  .btn-primary { background: #28a745; border: none; letter-spacing: 1px; }
+  .btn-primary:hover { background: #218838; transform: translateY(-1px); }
+  .badge.bg-primary { background-color: #0d6efd !important; }
+</style>
+
+{% endblock %}

@@ -81,35 +81,10 @@ def login_view(request):
         form=AuthenticationForm()
     return render(request,'users/login.html',{'form':form})
 
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-
-@receiver(post_save, sender=Booking)
-def send_booking_confirmation_email(sender, instance, created, **kwargs):
-    # Agar booking update hui hai (created=False) aur paid checkbox tick ho gaya hai
-    if not created and instance.paid:
-        subject = f"Ticket Confirmed: {instance.movie.name}"
-        message = (
-            f"Hello {instance.user.username},\n\n"
-            f"Your ticket for '{instance.movie.name}' has been successfully booked.\n"
-            f"Theater: {instance.theater.name}\n"
-            f"Seat Number: {instance.seat.seat_number}\n"
-            f"Status: Confirmed\n\n"
-            f"Enjoy your movie!"
-        )
-
-        from_email = settings.EMAIL_HOST_USER
-        recipient_list = [instance.user.email]
-
-        try:
-            send_mail(subject, message, from_email, recipient_list)
-        except Exception as e:
-            print(f"Email error: {e}")
 
 from django.contrib import messages
 
 def profile(request):
-    # User ki sari bookings fetch karein
     bookings = Booking.objects.filter(user=request.user).order_by('-booked_at')
 
     if request.method == 'POST':
@@ -128,7 +103,7 @@ def profile(request):
     return render(request, 'users/profile.html', context)
 
 @login_required
-def reset_password(request):            #don't know logic !
+def reset_password(request):          # gmail pr hi message aata hai !
     if request.method == 'POST':
         form=PasswordChangeForm(user=request.user,data=request.POST)
         if form.is_valid():

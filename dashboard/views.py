@@ -6,10 +6,10 @@ import json
 def admin_dashboard(request):
     now = timezone.now()
 
-    rev_today = Booking.objects.filter(booked_at__date=now.date()).count() * 500
-    rev_month = Booking.objects.filter(booked_at__month=now.month, booked_at__year=now.year).count() * 500
-    rev_6month = Booking.objects.filter(booked_at__gte=now - timedelta(days=180)).count() * 500
-    total_revenue = Booking.objects.count() * 500
+    rev_today = Booking.objects.filter(booked_at__date=now.date()).count() * 12
+    rev_month = Booking.objects.filter(booked_at__month=now.month, booked_at__year=now.year).count() * 12
+    rev_6month = Booking.objects.filter(booked_at__gte=now - timedelta(days=180)).count() * 12
+    total_revenue = Booking.objects.count() * 12
 
     theaters = Theater.objects.all()
     theater_yield_data = []
@@ -18,7 +18,7 @@ def admin_dashboard(request):
 
     for t in theaters:
         def get_rev(filters):
-            return Booking.objects.filter(theater=t, **filters).count() * 500
+            return Booking.objects.filter(theater=t, **filters).count() * 12
 
         theater_yield_data.append({
             'name': t.name,
@@ -26,7 +26,7 @@ def admin_dashboard(request):
             'month': get_rev({'booked_at__month': now.month, 'booked_at__year': now.year}),
             'six_month': get_rev({'booked_at__gte': now - timedelta(days=180)}),
             'year': get_rev({'booked_at__year': now.year}),
-            'all': Booking.objects.filter(theater=t).count() * 500
+            'all': Booking.objects.filter(theater=t).count() * 12
         })
 
         total_seats = t.seats.count()
@@ -41,8 +41,8 @@ def admin_dashboard(request):
         })
 
 
-    top_7_movies = Movie.objects.annotate(bc=Count('booking')).annotate(movie_revenue=F('bc') * 500).order_by('-bc')[:7]
-    theater_stats = Theater.objects.annotate(tc=Count('booking')).annotate(revenue=F('tc') * 500).order_by('-revenue')
+    top_7_movies = Movie.objects.annotate(bc=Count('booking')).annotate(movie_revenue=F('bc') * 12).order_by('-bc')[:7]
+    theater_stats = Theater.objects.annotate(tc=Count('booking')).annotate(revenue=F('tc') * 12).order_by('-revenue')
 
     theater_ranks = []
     for t in theaters:
@@ -80,7 +80,7 @@ def movies_data(request):
 
     movie_performance = Movie.objects.annotate(
         tickets=Count('booking'),
-        revenue=Count('booking') * 500
+        revenue=Count('booking') * 12
     ).order_by('-revenue')
 
     scatter_data = []
@@ -105,7 +105,7 @@ def theaters(request):
 
     theater_stats = Theater.objects.values('name').annotate( # annotate creat the table row by row !
         ticket_count=Count('booking'),
-        revenue=Count('booking') * 500,
+        revenue=Count('booking') * 12,
         avg_movie_rating=Avg('movie__rating'),
         unique_movies=Count('movie', distinct=True)
     ).order_by('-ticket_count')
@@ -132,6 +132,6 @@ def theaters(request):
         'avg_occupancy': avg_occupancy,
         'chart_labels': [t['name'] for t in theater_stats[:6]],
         'chart_revenue': [t['revenue'] for t in theater_stats[:6]],
-        'chart_variety': [t['unique_movies'] * 10 for t in theater_stats[:6]], # Scaled for visibility
+        'chart_variety': [t['unique_movies'] * 10 for t in theater_stats[:6]],
     }
     return render(request, "dashboard/theaters.html", context)
