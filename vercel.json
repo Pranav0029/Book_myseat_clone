@@ -1,14 +1,19 @@
 {
+  "version": 2,
   "builds": [
     {
-      "src": "bookmyseat/asgi.py",
+      "src": "bookmyseat/wsgi.py",
       "use": "@vercel/python"
     }
   ],
   "routes": [
     {
+      "src": "/static/(.*)",
+      "dest": "/static/$1"
+    },
+    {
       "src": "/(.*)",
-      "dest": "bookmyseat/asgi.py"
+      "dest": "bookmyseat/wsgi.py"
     }
   ]
 }

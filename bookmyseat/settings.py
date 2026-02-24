@@ -32,8 +32,13 @@ INSTALLED_APPS = [
     'dashboard', #
 ]
 
+#payment content1
+RAZORPAY_KEY_ID = os.environ.get("RAZORPAY_KEY_ID")
+RAZORPAY_KEY_SECRET = os.environ.get("RAZORPAY_KEY_SECRET")
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -41,6 +46,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 AUTH_USER_MODEL='auth.User'
 EMAIL_BACKEND='django.core.mail.backends.console.EmailBackend'
@@ -141,11 +147,9 @@ EMAIL_HOST_USER = 'add.mail.user0@gmail.com'
 EMAIL_HOST_PASSWORD ='gatjdcrfxkgwmlra'
 
 
-#payment content
+#payment content2
 '''
 RAZORPAY_KEY_ID ="rzp_live_SJdlsLiOuM9RiK"
 RAZORPAY_KEY_SECRET ="vfE8DDrkpK11Hpq204rKWHqF" 
 '''
 
-RAZORPAY_KEY_ID = os.environ.get("rzp_live_SJdlsLiOuM9RiK")
-RAZORPAY_KEY_SECRET = os.environ.get("vfE8DDrkpK11Hpq204rKWHqF")
