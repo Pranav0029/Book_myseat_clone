@@ -3,11 +3,11 @@
   "rewrites": [
     {
       "source": "/static/(.*)",
-      "dest": "/static/$1"
+      "destination": "/static/$1"
     },
     {
       "source": "/(.*)",
-      "dest": "bookmyseat/wsgi.py"
+      "destination": "bookmyseat/wsgi.py"
     }
   ]
 }
