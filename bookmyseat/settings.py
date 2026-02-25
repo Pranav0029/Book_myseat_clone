@@ -15,7 +15,7 @@ SECRET_KEY = 'django-insecure-c8aetlj(=vp90n@#yoc^&d(_6ivp(d!bv-4-f!r$lawptjzrwu
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['.vercel.app','https://book-myseat-clone.vercel.app/']
+ALLOWED_HOSTS = ['.vercel.app', 'book-myseat-clone.vercel.app', 'localhost', '127.0.0.1']
 
 # ALLOWED_HOSTS = ['127.0.0.1', 'localhost'] {if anyone want to try this code !}{else (hosted): '.vercel.app'}
 # Isse aapka local server aur Vercel dono chalenge
