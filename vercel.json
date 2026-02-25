@@ -1,18 +1,12 @@
 {
   "version": 2,
-  "builds": [
+  "rewrites": [
     {
-      "src": "bookmyseat/wsgi.py",
-      "use": "@vercel/python"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/static/(.*)",
+      "source": "/static/(.*)",
       "dest": "/static/$1"
     },
     {
-      "src": "/(.*)",
+      "source": "/(.*)",
       "dest": "bookmyseat/wsgi.py"
     }
   ]

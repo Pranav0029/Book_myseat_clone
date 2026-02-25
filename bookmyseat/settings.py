@@ -55,11 +55,19 @@ TEMPLATES = [
 WSGI_APPLICATION = 'bookmyseat.wsgi.application'
 
 # 4. Database (Vercel/Render ke liye optimized)
+
+import dj_database_url
+
 DATABASES = {
-    'default': dj_database_url.config(
-        default=os.environ.get("DATABASE_URL")
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
+
+#postgresql://book_myseat_clone_user:AOTC3XEcTK13Bjk20aFR5BYOZH1faX4S@dpg-d65gof1r0fns73d3u9pg-a.virginia-postgres.render.com/book_myseat_clone
+
+DATABASES['default'] =dj_database_url.parse('postgresql://book_myseat_clone_user:AOTC3XEcTK13Bjk20aFR5BYOZH1faX4S@dpg-d65gof1r0fns73d3u9pg-a.virginia-postgres.render.com/book_myseat_clone')
 
 # 5. Password validation
 AUTH_PASSWORD_VALIDATORS = [
