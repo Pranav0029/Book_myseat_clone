@@ -1,6 +1,5 @@
 from pathlib import Path
 import os
-import dj_database_url
 
 # 1. Base Directory
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -101,3 +100,7 @@ EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = '/login/'
 AUTH_USER_MODEL = 'auth.User'
+
+# 10. Payment system
+RAZORPAY_KEY_ID = "RAZORPAY_KEY_ID"
+RAZORPAY_KEY_SECRET = "RAZORPAY_KEY_SECRET"
